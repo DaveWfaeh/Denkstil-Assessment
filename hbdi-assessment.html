@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denkstil-Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f14;
+    --surface: #16181f;
+    --card: #1e2029;
+    --border: #2a2d3a;
+    --text: #e8e9f0;
+    --muted: #7a7d8f;
+    --A: #4ea8e0;
+    --B: #4ec994;
+    --C: #e07b4e;
+    --D: #c44ee0;
+    --accent: #f0d060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid noise texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 20%, rgba(78,168,224,0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 80%, rgba(196,78,224,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-top: 2rem;
+  }
+  .logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .quadrant-badges {
+    display: flex;
+    gap: 6px;
+  }
+  .qb {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+  }
+  .qb-A { background: rgba(78,168,224,0.2); color: var(--A); border: 1px solid var(--A); }
+  .qb-B { background: rgba(78,201,148,0.2); color: var(--B); border: 1px solid var(--B); }
+  .qb-C { background: rgba(224,123,78,0.2); color: var(--C); border: 1px solid var(--C); }
+  .qb-D { background: rgba(196,78,224,0.2); color: var(--D); border: 1px solid var(--D); }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  header h1 em {
+    color: var(--accent);
+    font-style: italic;
+  }
+  header p {
+    color: var(--muted);
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    margin-bottom: 2.5rem;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .progress-label { font-size: 0.85rem; color: var(--muted); }
+  .progress-count { font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+  .progress-bar-bg {
+    height: 5px; border-radius: 99px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--A), var(--D));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* SECTION */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-badge {
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+  }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+  .question-card:hover { border-color: #3a3d4f; }
+  .question-text {
+    font-size: 0.97rem;
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+    color: var(--text);
+  }
+  .q-num {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* LIKERT SCALE */
+  .likert {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .likert input[type="radio"] { display: none; }
+  .likert label {
+    flex: 1;
+    min-width: 44px;
+    text-align: center;
+    padding: 0.55rem 0.3rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+  .likert label:hover { border-color: var(--accent); color: var(--accent); }
+  .likert input[type="radio"]:checked + label {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0e0f14;
+    font-weight: 600;
+  }
+  .likert-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 0 2px;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+  }
+  .btn {
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0f14;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--text); }
+
+  /* RESULTS */
+  #results { display: none; }
+  .results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .results-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* SCORE BARS */
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  @media (max-width: 500px) { .score-grid { grid-template-columns: 1fr; } }
+  .score-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid var(--border);
+  }
+  .score-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+  .score-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .score-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+  }
+  .score-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  .score-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 0.4rem;
+  }
+  .score-bar-bg { height: 6px; border-radius: 99px; background: var(--border); margin-top: 0.8rem; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+
+  /* SPIDER CHART */
+  .spider-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .spider-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    align-self: flex-start;
+  }
+  canvas#spiderCanvas {
+    max-width: 420px;
+    width: 100%;
+    height: auto;
+  }
+
+  /* PROFILE */
+  .profile-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .profile-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .dominant-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .profile-text {
+    font-size: 0.93rem;
+    line-height: 1.7;
+    color: #c8cad8;
+  }
+  .trait-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .trait-tag {
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  /* QUADRANT MAP */
+  .quadrant-map {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .quadrant-box {
+    padding: 1.5rem;
+    position: relative;
+  }
+  .qbox-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+    opacity: 0.7;
+  }
+  .qbox-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+  .qbox-traits {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+  .qbox-score {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+  }
+
+  .restart-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: #0e0f14;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 1rem;
+  }
+  .restart-btn:hover { opacity: 0.85; }
+
+  /* NAV DOTS */
+  .section-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 2.5rem;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+  .nav-dot.active { background: var(--accent); transform: scale(1.4); }
+  .nav-dot.done { background: var(--B); }
+
+  /* COMPLIANCE BANNER */
+  .compliance-banner {
+    background: rgba(240,208,96,0.07);
+    border: 1px solid rgba(240,208,96,0.25);
+    border-radius: 12px;
+    padding: 1rem 1.3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  .compliance-banner .cb-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+  .compliance-banner p { font-size: 0.82rem; color: #c8c0a0; line-height: 1.6; }
+  .compliance-banner strong { color: var(--accent); }
+
+  .privacy-note {
+    background: rgba(78,201,148,0.07);
+    border: 1px solid rgba(78,201,148,0.2);
+    border-radius: 12px;
+    padding: 1rem 1.3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  .privacy-note p { font-size: 0.82rem; color: #a0c8b8; line-height: 1.6; }
+
+  /* CONSENT */
+  .consent-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .consent-block:hover { border-color: var(--accent); }
+  .consent-block.checked { border-color: var(--B); background: rgba(78,201,148,0.06); }
+  .consent-checkbox {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    transition: all 0.2s;
+    margin-top: 1px;
+    background: var(--surface);
+  }
+  .consent-block.checked .consent-checkbox {
+    background: var(--B);
+    border-color: var(--B);
+    color: #0e0f14;
+  }
+  .consent-text { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .consent-text strong { color: var(--text); }
+
+  .fade-in { animation: fadeInUp 0.4s ease forwards; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .quadrant-explain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    text-align: left;
+  }
+  .qe-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border-radius: 10px;
+  }
+  .qe-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .qe-item p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+  .qe-item strong { font-size: 0.88rem; display: block; margin-bottom: 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo-row">
+      <div class="quadrant-badges">
+        <div class="qb qb-A">A</div>
+        <div class="qb qb-B">B</div>
+        <div class="qb qb-C">C</div>
+        <div class="qb qb-D">D</div>
+      </div>
+    </div>
+    <h1>Denkstil-<br><em>Assessment</em></h1>
+    <p>Entdecke deinen bevorzugten Denkstil anhand des 4-Quadranten-Modells – inspiriert von Ned Herrmanns Gehirnforschung.</p>
+  </header>
+
+  <div id="intro" class="fade-in">
+
+    <!-- DISCLAIMER BANNER -->
+    <div class="compliance-banner">
+      <div class="cb-icon">⚠️</div>
+      <p><strong>Hinweis:</strong> Dieses Tool ist ein <strong>informelles Selbstreflexions-Instrument</strong> zur persönlichen Orientierung. Es basiert auf dem 4-Quadranten-Denkmodell, ist jedoch <strong>keine offizielle Diagnose</strong> und kein zertifiziertes psychologisches Testverfahren. Die Ergebnisse ersetzen keine professionelle Beratung oder Coaching. HBDI® ist eine eingetragene Marke von Herrmann International – dieses Tool ist eine eigenständige, unabhängige Umsetzung.</p>
+    </div>
+
+    <!-- PRIVACY NOTE -->
+    <div class="privacy-note">
+      <div class="cb-icon">🔒</div>
+      <p><strong style="color:var(--B)">Datenschutz:</strong> Dieses Assessment läuft vollständig in deinem Browser. Es werden <strong style="color:var(--B)">keine personenbezogenen Daten gespeichert, übertragen oder verarbeitet</strong>. Deine Antworten verlassen deinen Computer zu keiner Zeit. Es werden keine Cookies gesetzt und kein Tracking durchgeführt.</p>
+    </div>
+
+    <div class="intro-card">
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;">
+        Das 4-Quadranten-Modell beschreibt vier Denkpräferenzen. Beantworte alle Fragen intuitiv – es gibt keine richtigen oder falschen Antworten. <strong style="color:var(--text)">Dauer: ca. 10–15 Minuten.</strong>
+      </p>
+      <div class="quadrant-explain">
+        <div class="qe-item" style="background:rgba(78,168,224,0.08);">
+          <div class="qe-icon" style="background:rgba(78,168,224,0.15);color:var(--A);">🔬</div>
+          <div><strong style="color:var(--A);">A – Analytisch</strong><p>Logisch, faktenbasiert, quantitativ, rationell</p></div>
+        </div>
+        <div class="qe-item" style="background:rgba(78,201,148,0.08);">
+          <div class="qe-icon" style="background:rgba(78,201,148,0.15);color:var(--B);">📋</div>
+          <div><strong style="color:var(--B);">B – Organisiert</strong><p>Strukturiert, sequenziell, detailorientiert, geplant</p></div>
+        </div>
+        <div class="qe-item" style="background:rgba(224,123,78,0.08);">
+          <div class="qe-icon" style="background:rgba(224,123,78,0.15);color:var(--C);">🤝</div>
+          <div><strong style="color:var(--C);">C – Sozial</strong><p>Kommunikativ, empathisch, teamorientiert, interpersonal</p></div>
+        </div>
+        <div class="qe-item" style="background:rgba(196,78,224,0.08);">
+          <div class="qe-icon" style="background:rgba(196,78,224,0.15);color:var(--D);">💡</div>
+          <div><strong style="color:var(--D);">D – Kreativ</strong><p>Ganzheitlich, intuitiv, innovativ, zukunftsorientiert</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSENT CHECKBOX -->
+    <div class="consent-block" id="consentBlock" onclick="toggleConsent()">
+      <div class="consent-checkbox" id="consentCheck"></div>
+      <div class="consent-text">
+        <strong>Ich habe die Hinweise gelesen und verstanden.</strong><br>
+        Mir ist bewusst, dass dieses Tool zur Selbstreflexion dient und keine professionelle Diagnose ersetzt. Ich bin damit einverstanden, dass meine Antworten ausschließlich lokal in meinem Browser verarbeitet werden und nicht gespeichert oder übertragen werden.
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-primary" id="startBtn" onclick="startAssessment()" disabled>Assessment starten →</button>
+    </div>
+
+    <!-- FOOTER LEGAL -->
+    <p style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:1.5rem;line-height:1.6;">
+      Dieses Tool ist inspiriert vom Herrmann Brain Dominance Model. HBDI® ist eine eingetragene Marke von Herrmann International.<br>
+      Diese Umsetzung steht in keiner Verbindung zu Herrmann International.
+    </p>
+  </div>
+
+  <!-- ASSESSMENT -->
+  <div id="assessment" style="display:none;">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Fortschritt</span>
+        <span class="progress-count" id="progressCount">0 / 0</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="section-nav" id="sectionNav"></div>
+
+    <div id="questionSection" class="fade-in"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btnPrev" onclick="prevSection()">← Zurück</button>
+      <button class="btn btn-primary" id="btnNext" onclick="nextSection()">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="fade-in">
+    <div class="results-header">
+      <p style="color:var(--muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Dein Ergebnis</p>
+      <h2>HBDI-Profil</h2>
+    </div>
+
+    <div class="score-grid" id="scoreGrid"></div>
+
+    <div class="spider-section">
+      <div class="spider-title">Denkstil-Spinnendiagramm</div>
+      <canvas id="spiderCanvas" width="420" height="420"></canvas>
+    </div>
+
+    <div class="quadrant-map" id="quadrantMap"></div>
+
+    <div class="profile-section" id="profileSection"></div>
+
+    <button class="restart-btn" onclick="restart()">🔄 Neu starten</button>
+
+    <div style="margin-top:2rem;padding:1.2rem;background:var(--card);border:1px solid var(--border);border-radius:12px;">
+      <p style="font-size:0.78rem;color:var(--muted);line-height:1.7;text-align:center;">
+        ⚠️ <strong style="color:var(--text)">Hinweis:</strong> Dieses Ergebnis dient ausschließlich zur persönlichen Selbstreflexion und Orientierung. Es handelt sich um kein zertifiziertes psychologisches Testverfahren und ersetzt keine professionelle Beratung. Alle Daten wurden ausschließlich lokal in deinem Browser verarbeitet und wurden weder gespeichert noch übertragen.<br><br>
+        Inspiriert vom Herrmann Brain Dominance Instrument. HBDI® ist eine eingetragene Marke von Herrmann International. Diese Anwendung steht in keiner Verbindung zu Herrmann International.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+let consentGiven = false;
+function toggleConsent() {
+  consentGiven = !consentGiven;
+  const block = document.getElementById('consentBlock');
+  const check = document.getElementById('consentCheck');
+  const btn = document.getElementById('startBtn');
+  block.classList.toggle('checked', consentGiven);
+  check.textContent = consentGiven ? '✓' : '';
+  btn.disabled = !consentGiven;
+}
+
+ — 40 questions, 10 per quadrant
+// ═══════════════════════════════════════════════════
+const sections = [
+  {
+    id: 'A',
+    name: 'Analytisches Denken',
+    color: '#4ea8e0',
+    icon: '🔬',
+    questions: [
+      'Ich löse Probleme bevorzugt durch logische Analyse und faktenbasiertes Denken.',
+      'Ich verlasse mich beim Entscheiden hauptsächlich auf Daten und Zahlen.',
+      'Mathematische oder technische Aufgaben liegen mir gut.',
+      'Ich schätze Objektivität und vermeide es, Entscheidungen von Emotionen leiten zu lassen.',
+      'Ich beschäftige mich gerne mit komplexen theoretischen Fragestellungen.',
+      'Ich überprüfe Argumente kritisch, bevor ich ihnen zustimme.',
+      'Beim Lernen bevorzuge ich logische, systematische Erklärungen.',
+      'Ich finde Freude daran, abstrakte Konzepte durchzudenken.',
+      'In Diskussionen argumentiere ich vorrangig mit Fakten und Beweisen.',
+      'Ich bevorzuge Aufgaben, bei denen ich Hypothesen aufstellen und testen kann.',
+    ]
+  },
+  {
+    id: 'B',
+    name: 'Organisiertes Denken',
+    color: '#4ec994',
+    icon: '📋',
+    questions: [
+      'Ich plane meine Arbeit detailliert und halte mich an Strukturen und Pläne.',
+      'Ich bevorzuge klare Regeln, Verfahren und Standards.',
+      'Ich mag es, Aufgaben Schritt für Schritt in einer festgelegten Reihenfolge abzuarbeiten.',
+      'Ordnung und Sauberkeit sind mir bei der Arbeit sehr wichtig.',
+      'Ich beachte Details und stelle sicher, dass keine Fehler auftreten.',
+      'Ich erledige Aufgaben pünktlich und halte Fristen konsequent ein.',
+      'Ich fühle mich unwohl, wenn Pläne spontan geändert werden.',
+      'Ich verwalte gerne Informationen in geordneten Listen oder Dateisystemen.',
+      'Zuverlässigkeit und Beständigkeit sind für mich wichtige Werte bei der Arbeit.',
+      'Ich dokumentiere meine Arbeitsprozesse sorgfältig.',
+    ]
+  },
+  {
+    id: 'C',
+    name: 'Soziales Denken',
+    color: '#e07b4e',
+    icon: '🤝',
+    questions: [
+      'Im Team zu arbeiten macht mir deutlich mehr Spaß als alleine zu arbeiten.',
+      'Ich achte sehr auf die Gefühle und Bedürfnisse anderer Menschen.',
+      'Ich kommuniziere offen und spreche auch persönliche Themen an.',
+      'Ich bin häufig derjenige, der Konflikte im Team vermittelt und löst.',
+      'Feedback und Wertschätzung aus meinem Umfeld sind mir sehr wichtig.',
+      'Ich lerne am besten durch Austausch und Gespräche mit anderen.',
+      'Mir liegt das Wohlbefinden meiner Kollegen oder Mitmenschen am Herzen.',
+      'Ich bevorzuge kooperative Lösungsansätze gegenüber Konkurrenz.',
+      'Ich engagiere mich gerne in sozialen Projekten oder Gemeinschaftsaktivitäten.',
+      'Persönliche Beziehungen spielen bei meinen beruflichen Entscheidungen eine große Rolle.',
+    ]
+  },
+  {
+    id: 'D',
+    name: 'Kreatives Denken',
+    color: '#c44ee0',
+    icon: '💡',
+    questions: [
+      'Ich denke oft in Bildern, Metaphern oder ganzheitlichen Konzepten.',
+      'Neue und ungewöhnliche Ideen faszinieren mich mehr als bewährte Methoden.',
+      'Ich verlasse mich häufig auf meine Intuition, wenn ich Entscheidungen treffe.',
+      'Ich sehe Probleme eher als Chancen und Möglichkeiten zur Veränderung.',
+      'Ich bin offen für Risiken, wenn ich an eine neue Idee glaube.',
+      'Brainstorming und kreatives Explorieren bereiten mir viel Freude.',
+      'Ich sehe Zusammenhänge zwischen scheinbar unverbundenen Dingen.',
+      'Mich interessiert die Zukunft und wie Dinge sein könnten, nicht nur wie sie sind.',
+      'Ich breche gerne aus gewohnten Denkmustern aus.',
+      'Künstlerischer oder gestalterischer Ausdruck liegt mir.',
+    ]
+  }
+];
+
+const likertLabels = ['Trifft gar nicht zu', 'Trifft eher nicht zu', 'Neutral', 'Trifft eher zu', 'Trifft voll zu'];
+const likertValues = [1, 2, 3, 4, 5];
+
+let answers = {}; // key: "section_question" => value 1-5
+let currentSection = 0;
+
+function startAssessment() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('assessment').style.display = 'block';
+  buildNav();
+  renderSection();
+}
+
+function buildNav() {
+  const nav = document.getElementById('sectionNav');
+  nav.innerHTML = sections.map((s, i) =>
+    `<div class="nav-dot" id="dot-${i}" style="background:${i===0?'var(--accent)':'var(--border)'}"></div>`
+  ).join('');
+}
+
+function updateNav() {
+  sections.forEach((s, i) => {
+    const dot = document.getElementById(`dot-${i}`);
+    if (i === currentSection) {
+      dot.style.background = 'var(--accent)';
+      dot.style.transform = 'scale(1.4)';
+    } else if (isSectionDone(i)) {
+      dot.style.background = 'var(--B)';
+      dot.style.transform = 'scale(1)';
+    } else {
+      dot.style.background = 'var(--border)';
+      dot.style.transform = 'scale(1)';
+    }
+  });
+}
+
+function isSectionDone(si) {
+  return sections[si].questions.every((_, qi) => answers[`${si}_${qi}`] !== undefined);
+}
+
+function renderSection() {
+  const sec = sections[currentSection];
+  const totalQ = sections.reduce((a, s) => a + s.questions.length, 0);
+  const answeredQ = Object.keys(answers).length;
+  document.getElementById('progressCount').textContent = `${answeredQ} / ${totalQ}`;
+  document.getElementById('progressFill').style.width = `${(answeredQ/totalQ)*100}%`;
+
+  document.getElementById('btnPrev').style.visibility = currentSection === 0 ? 'hidden' : 'visible';
+  const isLast = currentSection === sections.length - 1;
+  const btnNext = document.getElementById('btnNext');
+  btnNext.textContent = isLast ? 'Auswertung anzeigen →' : 'Weiter →';
+
+  const container = document.getElementById('questionSection');
+  container.classList.remove('fade-in');
+  void container.offsetWidth; // reflow
+  container.classList.add('fade-in');
+
+  container.innerHTML = `
+    <div class="section-header">
+      <div class="section-badge" style="background:${sec.color}22;color:${sec.color};border:1px solid ${sec.color}55">
+        ${sec.icon} ${sec.id}
+      </div>
+      <div class="section-title">${sec.name}</div>
+    </div>
+    ${sec.questions.map((q, qi) => `
+      <div class="question-card">
+        <div class="q-num">Frage ${qi + 1} von ${sec.questions.length}</div>
+        <div class="question-text">${q}</div>
+        <div class="likert" id="likert-${qi}">
+          ${likertValues.map((v, li) => `
+            <input type="radio" name="q${currentSection}_${qi}" id="r${currentSection}_${qi}_${li}" value="${v}" ${answers[`${currentSection}_${qi}`]===v?'checked':''} onchange="recordAnswer(${currentSection},${qi},${v})">
+            <label for="r${currentSection}_${qi}_${li}">${v}</label>
+          `).join('')}
+        </div>
+        <div class="likert-labels">
+          <span>Gar nicht</span>
+          <span>Voll zutreffend</span>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  updateNav();
+}
+
+function recordAnswer(si, qi, val) {
+  answers[`${si}_${qi}`] = val;
+  // update progress
+  const totalQ = sections.reduce((a, s) => a + s.questions.length, 0);
+  const answeredQ = Object.keys(answers).length;
+  document.getElementById('progressCount').textContent = `${answeredQ} / ${totalQ}`;
+  document.getElementById('progressFill').style.width = `${(answeredQ/totalQ)*100}%`;
+}
+
+function nextSection() {
+  if (!isSectionDone(currentSection)) {
+    alert('Bitte beantworte alle Fragen in diesem Abschnitt.');
+    return;
+  }
+  if (currentSection < sections.length - 1) {
+    currentSection++;
+    renderSection();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    showResults();
+  }
+}
+
+function prevSection() {
+  if (currentSection > 0) {
+    currentSection--;
+    renderSection();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════════
+function computeScores() {
+  return sections.map((sec, si) => {
+    const raw = sec.questions.reduce((sum, _, qi) => sum + (answers[`${si}_${qi}`] || 3), 0);
+    const max = sec.questions.length * 5;
+    const pct = Math.round((raw / max) * 100);
+    return { id: sec.id, name: sec.name, color: sec.color, raw, pct };
+  });
+}
+
+const profiles = {
+  A: {
+    label: 'Der Analytiker',
+    desc: 'Du denkst logisch, faktenbasiert und rational. Du schätzt Daten, Fakten und präzise Analysen. In deiner Arbeit zeichnest du dich durch kritisches Denken, technisches Verständnis und Objektivität aus.',
+    traits: ['Analytisch', 'Logisch', 'Faktenbasiert', 'Präzise', 'Kritisch', 'Technisch']
+  },
+  B: {
+    label: 'Der Organisator',
+    desc: 'Du planst sorgfältig, arbeitest strukturiert und hältst dich an bewährte Prozesse. Dein Stärken liegen in der Umsetzung, Verlässlichkeit und im Detail-Management.',
+    traits: ['Strukturiert', 'Zuverlässig', 'Detailverliebt', 'Pünktlich', 'Systematisch', 'Konservativ']
+  },
+  C: {
+    label: 'Der Kommunikator',
+    desc: 'Du orientierst dich am Menschen. Empathie, Teamwork und soziale Kompetenz sind deine Stärken. Du schaffst Vertrauen und förderst harmonische Zusammenarbeit.',
+    traits: ['Empathisch', 'Kommunikativ', 'Teamorientiert', 'Kooperativ', 'Sozial', 'Einfühlsam']
+  },
+  D: {
+    label: 'Der Visionär',
+    desc: 'Du denkst in großen Zusammenhängen, liebst Neues und bist intuitiv. Kreativität, Innovation und Zukunftsorientierung sind deine Kernkompetenzen.',
+    traits: ['Kreativ', 'Intuitiv', 'Innovativ', 'Visionär', 'Ganzheitlich', 'Risikofreudig']
+  }
+};
+
+function showResults() {
+  document.getElementById('assessment').style.display = 'none';
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+
+  const scores = computeScores();
+  const dominant = scores.reduce((a, b) => a.pct > b.pct ? a : b);
+  const prof = profiles[dominant.id];
+
+  // Score cards
+  const sg = document.getElementById('scoreGrid');
+  sg.innerHTML = scores.map(s => `
+    <div class="score-card">
+      <div class="score-card-top">
+        <div class="score-label">
+          <div class="score-dot" style="background:${s.color}"></div>
+          ${s.id} – ${s.name}
+        </div>
+        <div class="score-value" style="color:${s.color}">${s.pct}%</div>
+      </div>
+      <div class="score-bar-bg">
+        <div class="score-bar-fill" style="width:${s.pct}%;background:${s.color}" id="bar-${s.id}"></div>
+      </div>
+      <div class="score-desc">${profiles[s.id].traits.slice(0,3).join(' · ')}</div>
+    </div>
+  `).join('');
+
+  // Quadrant map
+  const qm = document.getElementById('quadrantMap');
+  const quadOrder = [
+    {si:3, pos:'top-left', label:'Links Oben', bg:'rgba(196,78,224,0.12)'},
+    {si:0, pos:'top-right', label:'Rechts Oben', bg:'rgba(78,168,224,0.12)'},
+    {si:2, pos:'bot-left', label:'Links Unten', bg:'rgba(224,123,78,0.12)'},
+    {si:1, pos:'bot-right', label:'Rechts Unten', bg:'rgba(78,201,148,0.12)'},
+  ];
+  qm.innerHTML = quadOrder.map(q => {
+    const s = scores[q.si];
+    const sec = sections[q.si];
+    return `
+    <div class="quadrant-box" style="background:${q.bg}">
+      <div class="qbox-label" style="color:${s.color}">${q.label}</div>
+      <div class="qbox-name" style="color:${s.color}">${sec.icon} ${s.id} – ${s.name}</div>
+      <div class="qbox-traits">${profiles[s.id].traits.join(', ')}</div>
+      <div class="qbox-score" style="color:${s.color}">${s.pct}%</div>
+    </div>`;
+  }).join('');
+
+  // Profile text
+  const ps = document.getElementById('profileSection');
+  ps.innerHTML = `
+    <div class="profile-title">Dein Dominanzprofil</div>
+    <div class="dominant-badge" style="background:${dominant.color}22;color:${dominant.color};border:1px solid ${dominant.color}55">
+      ${sections.find(s=>s.id===dominant.id).icon} ${prof.label}
+    </div>
+    <div class="profile-text">${prof.desc}</div>
+    <div class="trait-tags">
+      ${prof.traits.map(t => `<span class="trait-tag" style="background:${dominant.color}15;color:${dominant.color}">${t}</span>`).join('')}
+    </div>
+  `;
+
+  // Draw spider after render
+  requestAnimationFrame(() => drawSpider(scores));
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function drawSpider(scores) {
+  const canvas = document.getElementById('spiderCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(W, H) * 0.38;
+  ctx.clearRect(0, 0, W, H);
+
+  const n = 4;
+  const labels = scores.map(s => `${s.id}: ${s.name}`);
+  const colors = scores.map(s => s.color);
+  const values = scores.map(s => s.pct / 100);
+  // Angle: top, right, bottom, left => rotate so A is top-right etc
+  const angles = scores.map((_, i) => (i * 2 * Math.PI / n) - Math.PI / 2);
+
+  // Draw grid rings
+  for (let ring = 1; ring <= 5; ring++) {
+    const r = (ring / 5) * R;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = ring === 5 ? '#3a3d4f' : '#2a2d3a';
+    ctx.lineWidth = ring === 5 ? 1.5 : 1;
+    ctx.stroke();
+  }
+
+  // Draw axis lines
+  angles.forEach(a => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = '#2a2d3a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Ring value labels
+  for (let ring = 1; ring <= 5; ring++) {
+    const r = (ring / 5) * R;
+    const val = ring * 20;
+    ctx.fillStyle = '#4a4d5f';
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(val + '%', cx + 4, cy - r + 14);
+  }
+
+  // Draw filled polygon
+  ctx.beginPath();
+  scores.forEach((s, i) => {
+    const r = values[i] * R;
+    const x = cx + r * Math.cos(angles[i]);
+    const y = cy + r * Math.sin(angles[i]);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+
+  // Gradient fill
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grad.addColorStop(0, 'rgba(240,208,96,0.25)');
+  grad.addColorStop(1, 'rgba(240,208,96,0.05)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#f0d060';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Draw data points
+  scores.forEach((s, i) => {
+    const r = values[i] * R;
+    const x = cx + r * Math.cos(angles[i]);
+    const y = cy + r * Math.sin(angles[i]);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    ctx.strokeStyle = '#0e0f14';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  // Draw labels
+  scores.forEach((s, i) => {
+    const labelR = R + 38;
+    const x = cx + labelR * Math.cos(angles[i]);
+    const y = cy + labelR * Math.sin(angles[i]);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Quadrant letter
+    ctx.font = 'bold 15px DM Sans, sans-serif';
+    ctx.fillStyle = colors[i];
+    ctx.fillText(s.id, x, y - 9);
+    // Percentage
+    ctx.font = '13px DM Sans, sans-serif';
+    ctx.fillStyle = '#e8e9f0';
+    ctx.fillText(s.pct + '%', x, y + 9);
+  });
+}
+
+function restart() {
+  answers = {};
+  currentSection = 0;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('intro').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
