@@ -577,12 +577,13 @@
     </div>
 
     <!-- CONSENT CHECKBOX -->
-    <div class="consent-block" id="consentBlock" onclick="toggleConsent()">
-      <div class="consent-checkbox" id="consentCheck"></div>
-      <div class="consent-text">
+    <div class="consent-block" id="consentBlock">
+      <input type="checkbox" id="consentCheck" onchange="toggleConsent(this)"
+        style="width:20px;height:20px;cursor:pointer;accent-color:#4ec994;flex-shrink:0;margin-top:2px;">
+      <label for="consentCheck" class="consent-text" style="cursor:pointer;">
         <strong>Ich habe die Hinweise gelesen und verstanden.</strong><br>
         Mir ist bewusst, dass dieses Tool zur Selbstreflexion dient und keine professionelle Diagnose ersetzt. Ich bin damit einverstanden, dass meine Antworten ausschließlich lokal in meinem Browser verarbeitet werden und nicht gespeichert oder übertragen werden.
-      </div>
+      </label>
     </div>
 
     <div class="btn-row" style="justify-content:center;">
@@ -649,13 +650,11 @@
 
 <script>
 let consentGiven = false;
-function toggleConsent() {
-  consentGiven = !consentGiven;
+function toggleConsent(checkbox) {
+  consentGiven = checkbox.checked;
   const block = document.getElementById('consentBlock');
-  const check = document.getElementById('consentCheck');
   const btn = document.getElementById('startBtn');
   block.classList.toggle('checked', consentGiven);
-  check.textContent = consentGiven ? '✓' : '';
   btn.disabled = !consentGiven;
 }
 
