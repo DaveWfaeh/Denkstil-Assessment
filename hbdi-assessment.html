@@ -491,11 +491,83 @@
   .consent-text { font-size: 0.85rem; color: #111111; line-height: 1.6; }
   .consent-text strong { color: #111111; }
 
+  /* ── PRINT / PDF STYLES ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; margin: 0; padding: 0; font-size: 11pt; }
+    body::before { display: none; }
+    .container { max-width: 100%; padding: 0; }
+    #intro, #assessment { display: none !important; }
+    #results { display: block !important; }
+    .restart-btn, .no-print { display: none !important; }
+    header { display: none; }
+
+    .results-header { text-align: center; margin-bottom: 1.2rem; padding-top: 0; }
+    .results-header h2 { font-size: 22pt; color: #111; }
+
+    .print-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #2680c2;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .print-header h1 { font-size: 18pt; color: #111; }
+    .print-header .print-date { font-size: 9pt; color: #666; }
+
+    .score-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr 1fr !important;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .score-card {
+      border-radius: 6px !important;
+      padding: 0.6rem 0.8rem !important;
+      box-shadow: none !important;
+      border: 1px solid #ddd !important;
+    }
+    .score-value { font-size: 1.4rem !important; }
+
+    .spider-section {
+      border-radius: 8px !important;
+      padding: 1rem !important;
+      margin-bottom: 1rem !important;
+      page-break-inside: avoid;
+      box-shadow: none !important;
+    }
+    canvas#spiderCanvas { max-width: 300px !important; }
+
+    .quadrant-map {
+      margin-bottom: 1rem !important;
+      page-break-inside: avoid;
+    }
+    .quadrant-box { padding: 0.8rem !important; }
+
+    .profile-section {
+      page-break-before: always;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    /* Each quadrant detail card */
+    .profile-section > div > div[style*="border-left"] {
+      page-break-inside: avoid;
+      margin-bottom: 0.8rem !important;
+    }
+
+    .fade-in { animation: none !important; }
+  }
+
   .fade-in { animation: fadeInUp 0.4s ease forwards; }
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  .print-header { display: none; }
 
   .intro-card {
     background: var(--card);
@@ -629,9 +701,19 @@
 
   <!-- RESULTS -->
   <div id="results" class="fade-in">
+
+    <!-- Nur im Druck sichtbar -->
+    <div class="print-header" id="printHeader">
+      <div>
+        <div style="font-size:9pt;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">Denkstil-Assessment</div>
+        <h1 style="font-family:'DM Serif Display',serif;font-size:20pt;color:#111;margin:0;">Persönliches Denkstil-Profil</h1>
+      </div>
+      <div class="print-date" id="printDate" style="text-align:right;font-size:9pt;color:#666;"></div>
+    </div>
+
     <div class="results-header">
       <p style="color:var(--muted);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Dein Ergebnis</p>
-      <h2>HBDI-Profil</h2>
+      <h2>Denkstil-Profil</h2>
     </div>
 
     <div class="score-grid" id="scoreGrid"></div>
@@ -645,7 +727,10 @@
 
     <div class="profile-section" id="profileSection"></div>
 
-    <button class="restart-btn" onclick="restart()">🔄 Neu starten</button>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+      <button class="restart-btn" onclick="restart()" style="flex:1;">🔄 Neu starten</button>
+      <button class="restart-btn" onclick="printResults()" style="flex:1;background:#2680c2;">🖨️ Als PDF speichern</button>
+    </div>
 
     <div style="margin-top:2rem;padding:1.2rem;background:var(--card);border:1px solid var(--border);border-radius:12px;">
       <p style="font-size:0.78rem;color:var(--muted);line-height:1.7;text-align:center;">
@@ -743,33 +828,57 @@ const sections = [
   }
 ];
 
-const likertLabels = ['Trifft gar nicht zu', 'Trifft eher nicht zu', 'Neutral', 'Trifft eher zu', 'Trifft voll zu'];
 const likertValues = [1, 2, 3, 4, 5];
 
-let answers = {}; // key: "section_question" => value 1-5
-let currentSection = 0;
+// Alle Fragen mit Quadrant-Referenz flach zusammenführen
+const allQuestions = [];
+sections.forEach((sec, si) => {
+  sec.questions.forEach((q, qi) => {
+    allQuestions.push({ text: q, si, qi, key: `${si}_${qi}` });
+  });
+});
+
+// Fester Shuffle (seeded) damit Reihenfolge immer gleich aber gemischt ist
+function seededShuffle(arr) {
+  const a = [...arr];
+  let seed = 42;
+  function rand() { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; }
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const shuffledQuestions = seededShuffle(allQuestions);
+
+// Seiten à 8 Fragen
+const PAGE_SIZE = 8;
+const totalPages = Math.ceil(shuffledQuestions.length / PAGE_SIZE);
+let answers = {};
+let currentPage = 0;
 
 function startAssessment() {
   document.getElementById('intro').style.display = 'none';
   document.getElementById('assessment').style.display = 'block';
   buildNav();
-  renderSection();
+  renderPage();
 }
 
 function buildNav() {
   const nav = document.getElementById('sectionNav');
-  nav.innerHTML = sections.map((s, i) =>
-    `<div class="nav-dot" id="dot-${i}" style="background:${i===0?'var(--accent)':'var(--border)'}"></div>`
+  nav.innerHTML = Array.from({length: totalPages}, (_, i) =>
+    `<div class="nav-dot" id="dot-${i}"></div>`
   ).join('');
 }
 
 function updateNav() {
-  sections.forEach((s, i) => {
+  Array.from({length: totalPages}, (_, i) => {
     const dot = document.getElementById(`dot-${i}`);
-    if (i === currentSection) {
+    if (!dot) return;
+    if (i === currentPage) {
       dot.style.background = 'var(--accent)';
       dot.style.transform = 'scale(1.4)';
-    } else if (isSectionDone(i)) {
+    } else if (isPageDone(i)) {
       dot.style.background = 'var(--B)';
       dot.style.transform = 'scale(1)';
     } else {
@@ -779,42 +888,51 @@ function updateNav() {
   });
 }
 
-function isSectionDone(si) {
-  return sections[si].questions.every((_, qi) => answers[`${si}_${qi}`] !== undefined);
+function isPageDone(page) {
+  const start = page * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, shuffledQuestions.length);
+  for (let i = start; i < end; i++) {
+    if (answers[shuffledQuestions[i].key] === undefined) return false;
+  }
+  return true;
 }
 
-function renderSection() {
-  const sec = sections[currentSection];
-  const totalQ = sections.reduce((a, s) => a + s.questions.length, 0);
+function renderPage() {
+  const totalQ = shuffledQuestions.length;
   const answeredQ = Object.keys(answers).length;
   document.getElementById('progressCount').textContent = `${answeredQ} / ${totalQ}`;
-  document.getElementById('progressFill').style.width = `${(answeredQ/totalQ)*100}%`;
+  document.getElementById('progressFill').style.width = `${(answeredQ / totalQ) * 100}%`;
 
-  document.getElementById('btnPrev').style.visibility = currentSection === 0 ? 'hidden' : 'visible';
-  const isLast = currentSection === sections.length - 1;
-  const btnNext = document.getElementById('btnNext');
-  btnNext.textContent = isLast ? 'Auswertung anzeigen →' : 'Weiter →';
+  document.getElementById('btnPrev').style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+  const isLast = currentPage === totalPages - 1;
+  document.getElementById('btnNext').textContent = isLast ? 'Auswertung anzeigen →' : 'Weiter →';
+
+  const start = currentPage * PAGE_SIZE;
+  const end = Math.min(start + PAGE_SIZE, shuffledQuestions.length);
+  const pageQuestions = shuffledQuestions.slice(start, end);
 
   const container = document.getElementById('questionSection');
   container.classList.remove('fade-in');
-  void container.offsetWidth; // reflow
+  void container.offsetWidth;
   container.classList.add('fade-in');
 
   container.innerHTML = `
     <div class="section-header">
-      <div class="section-badge" style="background:${sec.color}22;color:${sec.color};border:1px solid ${sec.color}55">
-        ${sec.icon} ${sec.id}
+      <div class="section-badge" style="background:#f0d06022;color:#c8960a;border:1px solid #f0d06055">
+        📝 Fragen ${start + 1}–${end}
       </div>
-      <div class="section-title">${sec.name}</div>
+      <div class="section-title">Beantworte intuitiv</div>
     </div>
-    ${sec.questions.map((q, qi) => `
+    ${pageQuestions.map((q, idx) => `
       <div class="question-card">
-        <div class="q-num">Frage ${qi + 1} von ${sec.questions.length}</div>
-        <div class="question-text">${q}</div>
-        <div class="likert" id="likert-${qi}">
+        <div class="q-num">Frage ${start + idx + 1} von ${totalQ}</div>
+        <div class="question-text">${q.text}</div>
+        <div class="likert">
           ${likertValues.map((v, li) => `
-            <input type="radio" name="q${currentSection}_${qi}" id="r${currentSection}_${qi}_${li}" value="${v}" ${answers[`${currentSection}_${qi}`]===v?'checked':''} onchange="recordAnswer(${currentSection},${qi},${v})">
-            <label for="r${currentSection}_${qi}_${li}">${v}</label>
+            <input type="radio" name="qmix_${q.key}" id="rmix_${q.key}_${li}" value="${v}"
+              ${answers[q.key] === v ? 'checked' : ''}
+              onchange="recordAnswer('${q.key}', ${v})">
+            <label for="rmix_${q.key}_${li}">${v}</label>
           `).join('')}
         </div>
         <div class="likert-labels">
@@ -827,23 +945,22 @@ function renderSection() {
   updateNav();
 }
 
-function recordAnswer(si, qi, val) {
-  answers[`${si}_${qi}`] = val;
-  // update progress
-  const totalQ = sections.reduce((a, s) => a + s.questions.length, 0);
+function recordAnswer(key, val) {
+  answers[key] = val;
+  const totalQ = shuffledQuestions.length;
   const answeredQ = Object.keys(answers).length;
   document.getElementById('progressCount').textContent = `${answeredQ} / ${totalQ}`;
-  document.getElementById('progressFill').style.width = `${(answeredQ/totalQ)*100}%`;
+  document.getElementById('progressFill').style.width = `${(answeredQ / totalQ) * 100}%`;
 }
 
 function nextSection() {
-  if (!isSectionDone(currentSection)) {
-    alert('Bitte beantworte alle Fragen in diesem Abschnitt.');
+  if (!isPageDone(currentPage)) {
+    alert('Bitte beantworte alle Fragen auf dieser Seite.');
     return;
   }
-  if (currentSection < sections.length - 1) {
-    currentSection++;
-    renderSection();
+  if (currentPage < totalPages - 1) {
+    currentPage++;
+    renderPage();
     window.scrollTo({top: 0, behavior: 'smooth'});
   } else {
     showResults();
@@ -851,9 +968,9 @@ function nextSection() {
 }
 
 function prevSection() {
-  if (currentSection > 0) {
-    currentSection--;
-    renderSection();
+  if (currentPage > 0) {
+    currentPage--;
+    renderPage();
     window.scrollTo({top: 0, behavior: 'smooth'});
   }
 }
@@ -863,7 +980,9 @@ function prevSection() {
 // ═══════════════════════════════════════════════════
 function computeScores() {
   return sections.map((sec, si) => {
-    const raw = sec.questions.reduce((sum, _, qi) => sum + (answers[`${si}_${qi}`] || 3), 0);
+    const raw = sec.questions.reduce((sum, _, qi) => {
+      return sum + (answers[`${si}_${qi}`] || 3);
+    }, 0);
     const max = sec.questions.length * 5;
     const pct = Math.round((raw / max) * 100);
     return { id: sec.id, name: sec.name, color: sec.color, raw, pct };
@@ -1148,9 +1267,29 @@ function drawSpider(scores) {
   });
 }
 
+function printResults() {
+  // Set print date
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('de-CH', { day:'2-digit', month:'long', year:'numeric' });
+  document.getElementById('printDate').innerHTML = 
+    'Datum: ' + dateStr + '<br>Denkstil-Assessment';
+
+  // Show print header
+  document.getElementById('printHeader').style.display = 'flex';
+
+  // Wait for canvas to be ready, then print
+  setTimeout(function() {
+    window.print();
+    // Hide print header again after
+    setTimeout(function() {
+      document.getElementById('printHeader').style.display = 'none';
+    }, 1000);
+  }, 300);
+}
+
 function restart() {
   answers = {};
-  currentSection = 0;
+  currentPage = 0;
   document.getElementById('results').style.display = 'none';
   document.getElementById('intro').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
