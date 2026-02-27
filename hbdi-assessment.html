@@ -918,10 +918,10 @@ function renderPage() {
 
   container.innerHTML = `
     <div class="section-header">
-      <div class="section-badge" style="background:#f0d06022;color:#c8960a;border:1px solid #f0d06055">
-        📝 Fragen ${start + 1}–${end}
+      <div class="section-badge" style="background:#f0f4ff;color:#555;border:1px solid #dde0ef">
+        Seite ${currentPage + 1} von ${totalPages}
       </div>
-      <div class="section-title">Beantworte intuitiv</div>
+      <div class="section-title" style="color:#111;">Beantworte intuitiv und spontan</div>
     </div>
     ${pageQuestions.map((q, idx) => `
       <div class="question-card">
