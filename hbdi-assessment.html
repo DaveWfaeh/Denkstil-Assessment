@@ -1039,6 +1039,19 @@ function recordAnswer(key, val) {
   document.getElementById('progressFill').style.width = `${(answeredQ / totalQ) * 100}%`;
 }
 
+function scrollToTop() {
+  // Funktioniert sowohl standalone als auch im iFrame
+  try { window.scrollTo({top: 0, behavior: 'smooth'}); } catch(e) {}
+  try { document.documentElement.scrollTo({top: 0, behavior: 'smooth'}); } catch(e) {}
+  try { document.body.scrollTo({top: 0, behavior: 'smooth'}); } catch(e) {}
+  try { window.parent.scrollTo({top: 0, behavior: 'smooth'}); } catch(e) {}
+  // Fallback ohne smooth
+  setTimeout(function() {
+    try { window.scrollTo(0, 0); } catch(e) {}
+    try { window.parent.scrollTo(0, 0); } catch(e) {}
+  }, 50);
+}
+
 function nextSection() {
   if (!isPageDone(currentPage)) {
     alert('Bitte beantworte alle Fragen auf dieser Seite.');
@@ -1047,9 +1060,10 @@ function nextSection() {
   if (currentPage < totalPages - 1) {
     currentPage++;
     renderPage();
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    scrollToTop();
   } else {
     showResults();
+    scrollToTop();
   }
 }
 
@@ -1057,7 +1071,7 @@ function prevSection() {
   if (currentPage > 0) {
     currentPage--;
     renderPage();
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    scrollToTop();
   }
 }
 
@@ -1249,7 +1263,7 @@ function showResults() {
   // Draw spider after render
   requestAnimationFrame(() => drawSpider(scores));
 
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  scrollToTop();
 }
 
 function drawSpider(scores) {
@@ -1378,7 +1392,7 @@ function restart() {
   currentPage = 0;
   document.getElementById('results').style.display = 'none';
   document.getElementById('intro').style.display = 'block';
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  scrollToTop();
 }
 
 // ── Dynamische Höhe für iFrame ──
