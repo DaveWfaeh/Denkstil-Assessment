@@ -666,7 +666,7 @@ function toggleConsent(checkbox) {
   btn.disabled = !consentGiven;
 }
 
- — 40 questions, 10 per quadrant
+ // HBDI QUESTIONS — 40 questions, 10 per quadrant
 // ═══════════════════════════════════════════════════
 const sections = [
   {
@@ -873,22 +873,46 @@ function computeScores() {
 const profiles = {
   A: {
     label: 'Der Analytiker',
-    desc: 'Du denkst logisch, faktenbasiert und rational. Du schätzt Daten, Fakten und präzise Analysen. In deiner Arbeit zeichnest du dich durch kritisches Denken, technisches Verständnis und Objektivität aus.',
-    traits: ['Analytisch', 'Logisch', 'Faktenbasiert', 'Präzise', 'Kritisch', 'Technisch']
+    profiltyp: 'Sehr starke Präferenz',
+    persoenlicheMerkmale: ['Analytisch', 'Faktisch', 'Logisch', 'Mathematisch', 'Quantitativ', 'Rational', 'Kritisch'],
+    arbeitsMerkmale: ['Analytisch arbeiten', 'Probleme lösen', 'Finanzielle Aspekte', 'Technische Aspekte'],
+    stärken: 'Du denkst klar, logisch und faktenbasiert. Du liebst es, komplexe Probleme zu durchdringen, Zahlen zu analysieren und rationale Schlussfolgerungen zu ziehen. Dein Denken ist präzise, kritisch und datengetrieben.',
+    arbeit: 'Im Beruf glänzt du bei analytischen Aufgaben, der Lösung technischer Probleme und dem Umgang mit Zahlen und Fakten. Du bevorzugst klare Evidenz und messbare Ergebnisse.',
+    unterDruck: 'Unter Druck neigst du dazu, noch analytischer zu werden – du suchst nach mehr Daten und Fakten, bevor du entscheidest. Du kannst dabei etwas distanzierter und weniger kommunikativ wirken.',
+    entwicklung: 'Um ganzheitlicher zu denken, könnte es helfen, bewusst mehr auf Intuition und zwischenmenschliche Aspekte zu achten. Der Austausch mit Menschen aus dem C-Quadranten kann sehr bereichernd sein.',
+    traits: ['Analytisch', 'Logisch', 'Faktenbasiert', 'Präzise', 'Kritisch', 'Rational', 'Mathematisch']
   },
   B: {
     label: 'Der Organisator',
-    desc: 'Du planst sorgfältig, arbeitest strukturiert und hältst dich an bewährte Prozesse. Dein Stärken liegen in der Umsetzung, Verlässlichkeit und im Detail-Management.',
+    profiltyp: 'Starke Präferenz',
+    persoenlicheMerkmale: ['Detailliert', 'Dominierend', 'Konservativ', 'Kontrolliert', 'Sequenziell', 'Organisiert'],
+    arbeitsMerkmale: ['Administrativ', 'Implementieren', 'Organisieren', 'Planen', 'Technische Aspekte'],
+    stärken: 'Du planst sorgfältig, arbeitest strukturiert und hältst dich konsequent an bewährte Prozesse. Deine Verlässlichkeit und dein Sinn für Details machen dich zu einem unverzichtbaren Umsetzer.',
+    arbeit: 'Du bist die Person, die sicherstellt, dass Pläne auch wirklich umgesetzt werden. Du verwaltest Prozesse, hältst Fristen ein und sorgst für Ordnung und Struktur in Projekten.',
+    unterDruck: 'Unter Druck wirst du noch strukturierter und kontrollierender. Du hältst dich stärker an Regeln und Pläne und kannst in stressigen Situationen weniger flexibel wirken.',
+    entwicklung: 'Mehr Offenheit für neue, unerprobte Wege und spontane Ideen kann deine Wirkung deutlich verstärken. Kreative Impulse aus dem D-Quadranten bereichern dein strukturiertes Denken.',
     traits: ['Strukturiert', 'Zuverlässig', 'Detailverliebt', 'Pünktlich', 'Systematisch', 'Konservativ']
   },
   C: {
     label: 'Der Kommunikator',
-    desc: 'Du orientierst dich am Menschen. Empathie, Teamwork und soziale Kompetenz sind deine Stärken. Du schaffst Vertrauen und förderst harmonische Zusammenarbeit.',
+    profiltyp: 'Normale Präferenz',
+    persoenlicheMerkmale: ['Emotional', 'Intuitiv', 'Musikalisch', 'Spirituell', 'Symbolisch', 'Verbal', 'Einfühlsam'],
+    arbeitsMerkmale: ['Ideen ausdrücken', 'Schreiben', 'Unterrichten/Training', 'Zwischenmenschliche Aspekte'],
+    stärken: 'Du bist empathisch, kommunikativ und menschenorientiert. Du schaffst Vertrauen, förderst Teamzusammenhalt und bringst Menschen zusammen.',
+    arbeit: 'In der Arbeit bist du stark in der Kommunikation, im Training und in allem was mit Menschen und Beziehungen zu tun hat. Du verstehst die emotionalen Bedürfnisse deiner Kollegen.',
+    unterDruck: 'Unter Druck ziehst du dich möglicherweise etwas zurück oder suchst verstärkt sozialen Rückhalt. Die emotionale Komponente kann unter Stress sowohl eine Stärke als auch eine Herausforderung sein.',
+    entwicklung: 'Deine sozialen Fähigkeiten sind wertvoll – kombiniere sie bewusst mit analytischem Denken (A) für noch überzeugendere Kommunikation mit faktenbasierten Argumenten.',
     traits: ['Empathisch', 'Kommunikativ', 'Teamorientiert', 'Kooperativ', 'Sozial', 'Einfühlsam']
   },
   D: {
     label: 'Der Visionär',
-    desc: 'Du denkst in großen Zusammenhängen, liebst Neues und bist intuitiv. Kreativität, Innovation und Zukunftsorientierung sind deine Kernkompetenzen.',
+    profiltyp: 'Starke Präferenz',
+    persoenlicheMerkmale: ['Ganzheitlich', 'Intuitiv', 'Kreativ', 'Künstlerisch', 'Räumlich', 'Simultan', 'Aufbauend'],
+    arbeitsMerkmale: ['Innovation', 'Integrieren', 'Konzipieren', 'Kreative Aspekte'],
+    stärken: 'Du denkst in großen Zusammenhängen, siehst Muster und Verbindungen wo andere sie nicht sehen, und hast ein ausgeprägtes Gespür für Zukünftiges und Mögliches.',
+    arbeit: 'Du bringst innovative Ideen, verbindest scheinbar Unverbundenes und treibst konzeptionelles Denken voran. Du bist der Ideengeber und Visionär im Team.',
+    unterDruck: 'Unter Druck kann dein Denken noch sprunghafter und ganzheitlicher werden. Du siehst viele Möglichkeiten gleichzeitig, was manchmal Entscheidungen erschwert.',
+    entwicklung: 'Kombiniere deine Visionen mit strukturierter Umsetzung (B-Quadrant) um Ideen wirklich in die Realität zu bringen. Deine Stärke liegt im Konzipieren – suche dir starke Umsetzer als Partner.',
     traits: ['Kreativ', 'Intuitiv', 'Innovativ', 'Visionär', 'Ganzheitlich', 'Risikofreudig']
   }
 };
@@ -899,8 +923,13 @@ function showResults() {
   resultsEl.style.display = 'block';
 
   const scores = computeScores();
-  const dominant = scores.reduce((a, b) => a.pct > b.pct ? a : b);
+  // Sort scores descending for preference order
+  const sorted = [...scores].sort((a, b) => b.pct - a.pct);
+  const dominant = sorted[0];
   const prof = profiles[dominant.id];
+
+  // Preference order string e.g. "A > D > B > C"
+  const prefOrder = sorted.map(s => s.id).join(' > ');
 
   // Score cards
   const sg = document.getElementById('scoreGrid');
@@ -916,41 +945,100 @@ function showResults() {
       <div class="score-bar-bg">
         <div class="score-bar-fill" style="width:${s.pct}%;background:${s.color}" id="bar-${s.id}"></div>
       </div>
-      <div class="score-desc">${profiles[s.id].traits.slice(0,3).join(' · ')}</div>
+      <div class="score-desc">${profiles[s.id].profiltyp}</div>
     </div>
   `).join('');
 
   // Quadrant map
   const qm = document.getElementById('quadrantMap');
   const quadOrder = [
-    {si:3, pos:'top-left', label:'Links Oben', bg:'rgba(196,78,224,0.12)'},
-    {si:0, pos:'top-right', label:'Rechts Oben', bg:'rgba(78,168,224,0.12)'},
-    {si:2, pos:'bot-left', label:'Links Unten', bg:'rgba(224,123,78,0.12)'},
-    {si:1, pos:'bot-right', label:'Rechts Unten', bg:'rgba(78,201,148,0.12)'},
+    {si:3, pos:'top-left', label:'D – Oben Rechts', bg:'rgba(144,48,192,0.08)'},
+    {si:0, pos:'top-right', label:'A – Oben Links', bg:'rgba(38,128,194,0.08)'},
+    {si:2, pos:'bot-left', label:'C – Unten Rechts', bg:'rgba(196,90,32,0.08)'},
+    {si:1, pos:'bot-right', label:'B – Unten Links', bg:'rgba(26,158,110,0.08)'},
   ];
   qm.innerHTML = quadOrder.map(q => {
     const s = scores[q.si];
     const sec = sections[q.si];
+    const p = profiles[s.id];
     return `
     <div class="quadrant-box" style="background:${q.bg}">
       <div class="qbox-label" style="color:${s.color}">${q.label}</div>
-      <div class="qbox-name" style="color:${s.color}">${sec.icon} ${s.id} – ${s.name}</div>
-      <div class="qbox-traits">${profiles[s.id].traits.join(', ')}</div>
+      <div class="qbox-name" style="color:${s.color}">${sec.icon} ${p.label}</div>
+      <div class="qbox-traits">${p.persoenlicheMerkmale.slice(0,4).join(' · ')}</div>
       <div class="qbox-score" style="color:${s.color}">${s.pct}%</div>
     </div>`;
   }).join('');
 
-  // Profile text
+  // Detailed profile section
   const ps = document.getElementById('profileSection');
   ps.innerHTML = `
-    <div class="profile-title">Dein Dominanzprofil</div>
-    <div class="dominant-badge" style="background:${dominant.color}22;color:${dominant.color};border:1px solid ${dominant.color}55">
-      ${sections.find(s=>s.id===dominant.id).icon} ${prof.label}
+    <div class="profile-title">Dein ausführliches Denkstil-Profil</div>
+
+    <!-- Preference order -->
+    <div style="background:#f0f4ff;border:1px solid #dde0ef;border-radius:10px;padding:1rem 1.3rem;margin-bottom:1.5rem;">
+      <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#888;margin-bottom:0.4rem;">Deine Präferenz-Reihenfolge</div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        ${sorted.map((s,i) => `
+          <span style="background:${s.color};color:#fff;font-weight:700;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.95rem;">${s.id}</span>
+          ${i < sorted.length-1 ? '<span style="color:#aaa;font-weight:700;font-size:1.1rem;">›</span>' : ''}
+        `).join('')}
+      </div>
+      <div style="font-size:0.82rem;color:#444;margin-top:0.5rem;">Dominantester Denkstil: <strong style="color:${dominant.color}">${dominant.id} – ${dominant.name} (${dominant.pct}%)</strong></div>
     </div>
-    <div class="profile-text">${prof.desc}</div>
-    <div class="trait-tags">
-      ${prof.traits.map(t => `<span class="trait-tag" style="background:${dominant.color}15;color:${dominant.color}">${t}</span>`).join('')}
-    </div>
+
+    <!-- Each quadrant detailed -->
+    ${sorted.map((s, rank) => {
+      const p = profiles[s.id];
+      const sec = sections.find(sec => sec.id === s.id);
+      const rankLabels = ['🥇 Höchste Präferenz', '🥈 Zweite Präferenz', '🥉 Dritte Präferenz', '4️⃣ Geringste Präferenz'];
+      return `
+      <div style="background:#fff;border:1px solid ${s.color}44;border-left:4px solid ${s.color};border-radius:12px;padding:1.4rem;margin-bottom:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.7rem;">
+            <span style="background:${s.color};color:#fff;font-weight:700;font-size:1.1rem;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;">${s.id}</span>
+            <div>
+              <div style="font-weight:700;font-size:1rem;color:#111;">${sec.icon} ${p.label}</div>
+              <div style="font-size:0.75rem;color:${s.color};font-weight:600;">${rankLabels[rank]}</div>
+            </div>
+          </div>
+          <div style="font-family:'DM Serif Display',serif;font-size:2rem;color:${s.color};font-weight:700;">${s.pct}%</div>
+        </div>
+
+        <div style="margin-bottom:0.8rem;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:0.3rem;">Persönliche Merkmale</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+            ${p.persoenlicheMerkmale.map(t => `<span style="background:${s.color}15;color:${s.color};border:1px solid ${s.color}40;padding:0.2rem 0.6rem;border-radius:5px;font-size:0.78rem;font-weight:600;">${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="margin-bottom:0.8rem;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#888;margin-bottom:0.3rem;">Merkmale der Arbeit</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+            ${p.arbeitsMerkmale.map(t => `<span style="background:#f5f5f5;color:#444;border:1px solid #e0e0e0;padding:0.2rem 0.6rem;border-radius:5px;font-size:0.78rem;">${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-top:0.8rem;">
+          <div style="background:#f8f9fc;border-radius:8px;padding:0.8rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:0.3rem;">💪 Stärken</div>
+            <div style="font-size:0.82rem;color:#111;line-height:1.6;">${p.stärken}</div>
+          </div>
+          <div style="background:#f8f9fc;border-radius:8px;padding:0.8rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:0.3rem;">🏢 Im Beruf</div>
+            <div style="font-size:0.82rem;color:#111;line-height:1.6;">${p.arbeit}</div>
+          </div>
+          <div style="background:#fff8f0;border-radius:8px;padding:0.8rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:0.3rem;">⚡ Unter Druck/Stress</div>
+            <div style="font-size:0.82rem;color:#111;line-height:1.6;">${p.unterDruck}</div>
+          </div>
+          <div style="background:#f0fff8;border-radius:8px;padding:0.8rem;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:0.3rem;">🌱 Entwicklungspotenzial</div>
+            <div style="font-size:0.82rem;color:#111;line-height:1.6;">${p.entwicklung}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
   `;
 
   // Draw spider after render
