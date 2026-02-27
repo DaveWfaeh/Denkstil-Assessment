@@ -1155,6 +1155,17 @@ function restart() {
   document.getElementById('intro').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
+
+// ── Dynamische Höhe für iFrame ──
+function sendHeight() {
+  var h = document.body.scrollHeight;
+  window.parent.postMessage({ frameHeight: h }, '*');
+}
+// Beim Laden
+window.addEventListener('load', sendHeight);
+// Bei jeder Größenänderung (z.B. wenn Ergebnisse erscheinen)
+new MutationObserver(sendHeight).observe(document.body, { childList: true, subtree: true, attributes: true });
+window.addEventListener('resize', sendHeight);
 </script>
 </body>
 </html>
