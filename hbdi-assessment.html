@@ -725,7 +725,8 @@ document.addEventListener('keydown',function(e){
 function computeScores(){
   return sections.map((sec,si)=>{
     const raw=sec.questions.reduce((sum,_,qi)=>sum+(answers[`${si}_${qi}`]||3),0);
-    return{id:sec.id,name:sec.name,color:sec.color,icon:sec.icon,raw,pct:Math.round((raw/(sec.questions.length*5))*100)};
+    const minRaw=sec.questions.length*1, maxRaw=sec.questions.length*5;
+    return{id:sec.id,name:sec.name,color:sec.color,icon:sec.icon,raw,pct:Math.round(((raw-minRaw)/(maxRaw-minRaw))*100)};
   });
 }
 
