@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+   <script>
+  function notifyParent() {
+    window.parent.postMessage({
+      frameHeight: document.body.scrollHeight,
+      scrollToTop: true
+    }, '*');
+  }
+
+  window.addEventListener('load', notifyParent);
+
+  // Höhe auch bei Fenstergrößenänderung aktualisieren
+  var observer = new ResizeObserver(function() {
+    window.parent.postMessage({
+      frameHeight: document.body.scrollHeight
+    }, '*');
+  });
+  observer.observe(document.body);
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Denkstil-Assessment</title>
