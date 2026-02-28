@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Denkstil",
+    "slug": "denkstil-assessment",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "ch.faeh-consulting.denkstil",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "ch.faeh.consulting.denkstil"
+    },
+    "sdkVersion": "51.0.0"
+  }
+}
